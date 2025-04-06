@@ -24,10 +24,10 @@ router.get("/stats", getBookingStats);
 router.put("/slots/:slotId", updateSlot);
 router.delete("/slots/:slotId", deleteSlot);
 router.post("/students/:studentId/add-rides", addRidesToStudent);
-router.get(
+/*router.get(
   "/bookings",
   require("../controllers/adminController").getAllBookings
-);
+);*/
 router.get(
   "/students/:studentId/bookings",
   require("../controllers/adminController").getStudentBookings
