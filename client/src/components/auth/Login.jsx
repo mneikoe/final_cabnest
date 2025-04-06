@@ -54,12 +54,12 @@ const Login = () => {
             <div className="flex justify-center mb-4">
               <motion.div
                 whileHover={{ rotate: -10 }}
-                className="bg-gradient-to-br from-blue-600 to-teal-500 p-3 rounded-2xl shadow-lg"
+                className="bg-gradient-to-br from-red-700 to-red-300 p-3 rounded-2xl shadow-lg"
               >
                 <LogIn size={32} className="text-white" />
               </motion.div>
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-red-700 to-teal-500 bg-clip-text text-transparent mb-2">
               Welcome Back
             </h1>
             <p className="text-gray-600">
@@ -162,23 +162,13 @@ const Login = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-blue-200 transition-all relative overflow-hidden"
+              className="w-full bg-gradient-to-r from-red-600 to-red-400 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-blue-200 transition-all relative overflow-hidden"
             >
               <span className="relative z-10">
                 {loading ? "Signing In..." : "Continue Journey"}
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-blue-600 opacity-0 hover:opacity-100 transition-opacity" />
             </motion.button>
-
-            <div className="text-center text-sm text-gray-600 pt-4">
-              New to CabNest?{" "}
-              <Link
-                to="/register"
-                className="text-blue-600 hover:text-blue-800 font-semibold underline underline-offset-4 hover:no-underline transition-all"
-              >
-                Start your commute journey
-              </Link>
-            </div>
           </form>
         </div>
 

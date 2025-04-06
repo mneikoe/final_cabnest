@@ -8,7 +8,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-indigo-600 px-4 text-white shadow-lg">
+    <header className="bg-white-100 px-4 text-black shadow-lg">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link
@@ -16,11 +16,13 @@ const Header = () => {
             className="flex items-center space-x-2 text-xl font-bold  transition"
           >
             <img
-              className="h-10 w-10 rounded-full shadow-md object-cover"
-              src="/cablogo.svg"
+              className="h-9 w-9 sm:h-10 sm:w-10  object-contain"
+              src="/fcabnestlogo.jpg"
               alt="Cabnest Logo"
             />
-            <span className="tracking-wide">Cabnest.co</span>
+            <span className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
+              CABNest
+            </span>
           </Link>
 
           {/* Desktop Menu */}
@@ -59,7 +61,7 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="hover:text-gray-200">
+                <Link to="/login" className="bg-pink-600 hover:text-red-400">
                   Login
                 </Link>
                 <Link
@@ -83,11 +85,11 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-indigo-500">
+          <div className="md:hidden  mt-4 pt-4 border-t border-pink-500">
             {currentUser ? (
               <div className="space-y-3">
                 <div className="font-medium">{currentUser.name}</div>
-                <div className="text-sm text-indigo-200">
+                <div className="text-sm text-black-200">
                   {currentUser.email}
                 </div>
                 {currentUser.role === "student" && (
@@ -100,11 +102,11 @@ const Header = () => {
                     logout();
                     setMobileMenuOpen(false);
                   }}
-                  className="block w-full text-left py-2 text-indigo-200 hover:text-white"
+                  className="block w-full text-left py-2 text-black hover:text-red-600"
                 >
                   Logout
                 </button>
-                <Link to="/admin/dashboard" className="hover:text-gray-200">
+                <Link to="/admin/dashboard" className="hover:text-red-600">
                   Dashboard
                 </Link>
               </div>
@@ -112,14 +114,14 @@ const Header = () => {
               <div className="space-y-3">
                 <Link
                   to="/login"
-                  className="block py-2 hover:text-gray-200"
+                  className="block py-2 bg-red-500 rounded-full text-center hover:text-red-800"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="block bg-white text-indigo-600 px-4 py-2 rounded-lg text-center hover:bg-gray-100"
+                  className="block bg-white text-red-400 px-4 py-2 rounded-full text-center hover:bg-red-200"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Register
