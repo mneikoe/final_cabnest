@@ -15,6 +15,7 @@ import MyBookings from "./components/student/MyBookings";
 import Dashboard from "./components/admin/Dashboard";
 import SlotManagement from "./components/admin/SlotManagement";
 import StudentManagement from "./components/admin/StudentManagement";
+import InstallPWA from "./components/InstallPWA";
 
 const PrivateRoute = ({ element, requiredRole }) => {
   const { currentUser, loading } = useContext(AuthContext);
@@ -44,6 +45,11 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Install PWA button */}
+      {/* <InstallPWA /> */}
+      <InstallPWA />
+
+      {/* Header */}
       {/* Hide Header only on landing page */}
       {location.pathname !== "/" && <Header />}
 

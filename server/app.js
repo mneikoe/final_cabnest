@@ -8,7 +8,7 @@ const studentRoutes = require("./routes/studentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const cron = require("node-cron");
 const { autoGenerateNextDaySlotsJob } = require("./cron/slotCron");
-//const path = require("path");
+const path = require("path");
 
 dotenv.config();
 connectDB();
@@ -28,12 +28,11 @@ app.use("/api/admin", adminRoutes);
 cron.schedule("55 23 * * *", autoGenerateNextDaySlotsJob);
 
 // Serve static assets if in production
-/*if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '/frontend/build')));
 
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
-  );
-}*/
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (req, res) =>
+  res.sendFile(path.resolve(__dirname, "dist", "index.html"))
+);
 
 module.exports = app;
