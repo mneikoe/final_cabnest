@@ -228,7 +228,7 @@ const Sidebar = () => {
 
         {/* Location Indicator */}
         {currentUser?.location && (
-          <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs text-black/90">
+          <div className="absolute -top-7  left-1/2 -translate-x-1/2 px-1 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs text-black/90">
             📍 {currentUser.location}
           </div>
         )}

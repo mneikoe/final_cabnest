@@ -5,6 +5,8 @@ const planSchema = new mongoose.Schema(
     name: { type: String, required: true },
     rides: { type: Number, required: true },
     price: { type: Number, required: true },
+    location: { type: String, required: true },
+    description: { type: String, required: true },
   },
   { timestamps: true }
 );

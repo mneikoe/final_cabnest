@@ -48,11 +48,9 @@ const Register = () => {
 
   const locations = [
     "Delhi",
-    "Mumbai",
-    "Bangalore",
-    "Chennai",
-    "Kolkata",
-    "Hyderabad",
+    "RamaMandi/DeepNagar/AGI",
+    "Phagwara",
+    "LawGate/HardasPur/Maheru/Chaheru",
   ];
 
   const staggerVariants = {
@@ -208,7 +206,7 @@ const Register = () => {
                 required
               >
                 <option value="" className="text-gray-500">
-                  Select Campus Location
+                  Select Your Location
                 </option>
                 {locations.map((loc) => (
                   <option key={loc} value={loc} className="bg-gray-800">

@@ -217,22 +217,24 @@ const getStudentBookings = async (req, res) => {
 };
 const createPlan = async (req, res) => {
   try {
-    const { name, rides, price } = req.body;
+    const { name, rides, price, location, description } = req.body;
 
-    if (!name || !rides || !price) {
+    if (!name || !rides || !price || !location || !description) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const newPlan = new Plan({ name, rides, price });
+    const newPlan = new Plan({ name, rides, price, location, description });
     await newPlan.save();
 
-    res
-      .status(201)
-      .json({ message: "Plan created successfully", plan: newPlan });
+    res.status(201).json({
+      message: "Plan created successfully",
+      plan: newPlan,
+    });
   } catch (error) {
     res.status(500).json({ message: "Failed to create plan" });
   }
 };
+
 const getAllPlans = async (req, res) => {
   try {
     const plans = await Plan.find();
@@ -241,16 +243,25 @@ const getAllPlans = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch plans" });
   }
 };
+
 const updatePlan = async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = await Plan.findByIdAndUpdate(id, req.body, { new: true });
+    const { name, rides, price, location, description } = req.body;
+
+    const updated = await Plan.findByIdAndUpdate(
+      id,
+      { name, rides, price, location, description },
+      { new: true, runValidators: true }
+    );
+
     if (!updated) return res.status(404).json({ message: "Plan not found" });
     res.status(200).json({ message: "Plan updated", plan: updated });
   } catch (err) {
     res.status(500).json({ message: "Update failed" });
   }
 };
+
 const deletePlan = async (req, res) => {
   try {
     const { id } = req.params;
@@ -261,16 +272,19 @@ const deletePlan = async (req, res) => {
     res.status(500).json({ message: "Delete failed" });
   }
 };
+
 const getPlansForStudents = async (req, res) => {
   try {
-    const plans = await Plan.find().sort({ price: 1 });
+    const plans = await Plan.find()
+      .sort({ price: 1 })
+      .select("name rides price location description");
+
     res.status(200).json(plans);
   } catch (error) {
     console.error("Error fetching student plans:", error);
     res.status(500).json({ message: "Failed to fetch plans for students." });
   }
 };
-
 module.exports = {
   generateSlots,
   autoGenerateNextDaySlots,

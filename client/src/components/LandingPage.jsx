@@ -377,7 +377,7 @@ const CabNestLanding = () => {
               {[
                 {
                   name: "Monthly Plan",
-                  price: "1,499",
+                  price: "1,177",
                   duration: "month",
                   rides: "44 Rides (2/day)",
                   features: [
@@ -391,7 +391,7 @@ const CabNestLanding = () => {
                 },
                 {
                   name: "Semester Plan",
-                  price: "7,499",
+                  price: "4,499",
                   duration: "6 months",
                   rides: "264 Rides (2/day)",
                   features: [
@@ -411,7 +411,7 @@ const CabNestLanding = () => {
                         {plan.name}
                       </h4>
                       <div className="text-2xl font-bold mb-1">
-                        ₹{plan.price}
+                        Starting From ₹{plan.price}
                         <span className="text-sm text-gray-500 ml-1">
                           /{plan.duration}
                         </span>
@@ -455,10 +455,10 @@ const CabNestLanding = () => {
               <p>
                 Need help? WhatsApp us at{" "}
                 <a
-                  href="https://wa.me/919065139977"
+                  href="https://wa.me/9815505777"
                   className="text-blue-600 hover:underline"
                 >
-                  +91 90651 39977
+                  +91 98155 05777
                 </a>
                 (9AM - 7PM)
               </p>
@@ -603,7 +603,7 @@ const CabNestLanding = () => {
                   <Phone className="w-5 h-5 text-purple-400 flex-shrink-0" />
                   <div>
                     <p className="font-medium">24/7 Support:</p>
-                    <p>+91 9825505777</p>
+                    <p>+91 9815505777</p>
                     <p>Mon-Sun: 7AM - 11PM IST</p>
                   </div>
                 </div>

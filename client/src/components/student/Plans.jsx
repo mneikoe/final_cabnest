@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CheckCircle, Zap, Shield, MessageCircle } from "lucide-react";
+
 const Plans = () => {
   const [plans, setPlans] = useState([]);
   const [error, setError] = useState(null);
+  const [userLocation, setUserLocation] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPlans = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
         const config = {
@@ -17,22 +19,36 @@ const Plans = () => {
           },
         };
 
-        const res = await axios.get(
+        // Fetch current user details
+        const userRes = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/auth/profile`,
+          config
+        );
+        const location = userRes.data.location;
+        setUserLocation(location);
+
+        // Fetch all plans
+        const planRes = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/api/students/subs-plans`,
           config
         );
-        setPlans(res.data);
+
+        // Filter plans based on user location
+        const filteredPlans = planRes.data.filter(
+          (plan) => plan.location === location
+        );
+        setPlans(filteredPlans);
       } catch (err) {
         setError("❌ Failed to load plans. Please try again.");
         console.error(err);
       }
     };
 
-    fetchPlans();
+    fetchData();
   }, []);
 
   const handleWhatsAppRedirect = (plan) => {
-    const phoneNumber = "9815505777"; // Replace with your WhatsApp number
+    const phoneNumber = "9815505777";
     const message = `Hi! I want to purchase the ${plan.name} (${plan.rides} rides) for ₹${plan.price}. Please guide me through the payment process.`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
       message
@@ -98,7 +114,9 @@ const Plans = () => {
         {/* Plans Grid */}
         {plans.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl">
-            <p className="text-gray-500">Loading available plans...</p>
+            <p className="text-gray-500">
+              No available plans for your location.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -108,26 +126,37 @@ const Plans = () => {
                 className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100"
               >
                 <div className="p-8">
-                  <div className="flex items-center justify-between mb-6">
+                  {/* Plan Title & Location */}
+                  <div className="mb-4">
                     <h3 className="text-2xl font-bold text-gray-900">
                       {plan.name}
                     </h3>
-                    <div className="bg-blue-100 px-3 py-1 rounded-full text-sm font-medium text-blue-700">
+                    <p className="text-sm text-gray-500">{plan.location}</p>
+                  </div>
+
+                  {/* Price & Rides */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <span className="text-4xl font-bold text-blue-600">
+                        ₹{plan.price}
+                      </span>
+                      <span className="text-gray-500 ml-2 text-sm">/month</span>
+                    </div>
+                    <div className="bg-blue-100 px-2 py-1 rounded-full text-xs font-medium text-blue-700">
                       {plan.rides} Rides
                     </div>
                   </div>
 
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-blue-600">
-                      ₹{plan.price}
-                    </span>
-                    <span className="text-gray-500 ml-2">/month</span>
-                  </div>
-
+                  {/* Features */}
                   <div className="space-y-4 mb-8">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500" />
-                      <span className="text-gray-600">{plan.description}</span>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 mt-1 text-green-500" />
+                      <span
+                        className="text-gray-600 line-clamp-3 text-sm"
+                        title={plan.description}
+                      >
+                        {plan.description}
+                      </span>
                     </div>
                     <div className="flex items-center gap-3">
                       <CheckCircle className="w-5 h-5 text-green-500" />
@@ -143,6 +172,7 @@ const Plans = () => {
                     </div>
                   </div>
 
+                  {/* WhatsApp CTA */}
                   <button
                     onClick={() => handleWhatsAppRedirect(plan)}
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all"
@@ -152,7 +182,7 @@ const Plans = () => {
                   </button>
                 </div>
 
-                {/* Plan Footer */}
+                {/* Footer */}
                 <div className="bg-gray-50 px-8 py-4 border-t border-gray-100">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Shield className="w-4 h-4 text-blue-500" />
