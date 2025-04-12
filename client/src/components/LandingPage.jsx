@@ -146,6 +146,29 @@ const CabNestLanding = () => {
 
           {/* Mobile Menu */}
           <div className="md:hidden flex items-center gap-3">
+            {currentUser ? (
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2 pl-4"
+              >
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full">
+                  <User size={18} className="text-gray-600" />
+                  <span className="text-sm font-medium">
+                    {currentUser.name}
+                  </span>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/login")}
+                className="relative bg-gradient-to-r from-red-600 to-red-400 text-white px-6 py-2 rounded-full font-semibold group overflow-hidden"
+              >
+                <span className="relative z-10">Login</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </motion.button>
+            )}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 rounded-lg hover:bg-red-100 transition"
@@ -159,6 +182,7 @@ const CabNestLanding = () => {
           </div>
 
           {/* Mobile Dropdown */}
+
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
@@ -409,7 +433,7 @@ const CabNestLanding = () => {
                   </ul>
 
                   <a
-                    href={`https://wa.me/919065139977?text=Hi!%20I%20want%20to%20purchase%20the%20${plan.name}%20(₹${plan.price})`}
+                    href={`https://wa.me/9815505777?text=Hi!%20I%20want%20to%20purchase%20the%20${plan.name}%20(₹${plan.price})`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
@@ -579,7 +603,7 @@ const CabNestLanding = () => {
                   <Phone className="w-5 h-5 text-purple-400 flex-shrink-0" />
                   <div>
                     <p className="font-medium">24/7 Support:</p>
-                    <p>+91 90651 39977</p>
+                    <p>+91 9825505777</p>
                     <p>Mon-Sun: 7AM - 11PM IST</p>
                   </div>
                 </div>
@@ -588,7 +612,7 @@ const CabNestLanding = () => {
                   <Mail className="w-5 h-5 text-red-400 flex-shrink-0" />
                   <div>
                     <p className="font-medium">Official Emails:</p>
-                    <p>support@cabnest.in</p>
+                    <p>cabnest.info@gmail.com</p>
                     <p>care@cabnest.in (Escalations)</p>
                   </div>
                 </div>

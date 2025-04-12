@@ -32,7 +32,7 @@ const Plans = () => {
   }, []);
 
   const handleWhatsAppRedirect = (plan) => {
-    const phoneNumber = "919065139977"; // Replace with your WhatsApp number
+    const phoneNumber = "9815505777"; // Replace with your WhatsApp number
     const message = `Hi! I want to purchase the ${plan.name} (${plan.rides} rides) for ₹${plan.price}. Please guide me through the payment process.`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
       message
