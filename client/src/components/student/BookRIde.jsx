@@ -274,6 +274,15 @@ const BookRide = () => {
                   }
                   ${slot.isFull ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
+                  <input
+                    type="radio"
+                    name="goSlots"
+                    value={slot._id}
+                    checked={selectedGoSlot === slot._id}
+                    onChange={() => !slot.isFull && setSelectedGoSlot(slot._id)}
+                    className="hidden"
+                    disabled={slot.isFull}
+                  />
                   <div className="flex items-center justify-between w-full">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -330,6 +339,17 @@ const BookRide = () => {
                  }
                  ${slot.isFull ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
+                  <input
+                    type="radio"
+                    name="returnSlots"
+                    value={slot._id}
+                    checked={selectedReturnSlot === slot._id}
+                    onChange={() =>
+                      !slot.isFull && setSelectedReturnSlot(slot._id)
+                    }
+                    className="hidden"
+                    disabled={slot.isFull}
+                  />
                   <div className="flex items-center justify-between w-full">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
