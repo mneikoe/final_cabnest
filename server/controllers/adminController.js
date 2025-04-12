@@ -2,7 +2,7 @@ const { get } = require("mongoose");
 const Slot = require("../models/Slot");
 const User = require("../models/User");
 const { createDailySlots } = require("../utils/slotScheduler");
-
+const Plan = require("../models/Plan");
 const generateSlots = async (req, res) => {
   try {
     const { location, date } = req.body;
@@ -215,6 +215,61 @@ const getStudentBookings = async (req, res) => {
       .json({ message: "Failed to fetch student bookings", error });
   }
 };
+const createPlan = async (req, res) => {
+  try {
+    const { name, rides, price } = req.body;
+
+    if (!name || !rides || !price) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newPlan = new Plan({ name, rides, price });
+    await newPlan.save();
+
+    res
+      .status(201)
+      .json({ message: "Plan created successfully", plan: newPlan });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create plan" });
+  }
+};
+const getAllPlans = async (req, res) => {
+  try {
+    const plans = await Plan.find();
+    res.status(200).json(plans);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch plans" });
+  }
+};
+const updatePlan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await Plan.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ message: "Plan not found" });
+    res.status(200).json({ message: "Plan updated", plan: updated });
+  } catch (err) {
+    res.status(500).json({ message: "Update failed" });
+  }
+};
+const deletePlan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Plan.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ message: "Plan not found" });
+    res.status(200).json({ message: "Plan deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Delete failed" });
+  }
+};
+const getPlansForStudents = async (req, res) => {
+  try {
+    const plans = await Plan.find().sort({ price: 1 });
+    res.status(200).json(plans);
+  } catch (error) {
+    console.error("Error fetching student plans:", error);
+    res.status(500).json({ message: "Failed to fetch plans for students." });
+  }
+};
 
 module.exports = {
   generateSlots,
@@ -227,4 +282,9 @@ module.exports = {
   addRidesToStudent,
   getAllBookings,
   getStudentBookings,
+  createPlan,
+  getAllPlans,
+  updatePlan,
+  deletePlan,
+  getPlansForStudents,
 };

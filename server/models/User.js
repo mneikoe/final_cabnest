@@ -11,6 +11,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  phone: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
   password: {
     type: String,
     required: true,
@@ -23,8 +28,9 @@ const userSchema = new mongoose.Schema({
   location: String,
   remainingRides: {
     type: Number,
-    default: 44,
+    default: 0,
   },
+
   bookings: [
     {
       date: Date,

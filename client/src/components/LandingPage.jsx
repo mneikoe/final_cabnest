@@ -1,21 +1,42 @@
-
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import HeroWithBackgroundSlider from "./BusCarousel";
-
+import { AuthContext } from "../contexts/AuthContext";
+import {
+  User,
+  LayoutDashboard,
+  Menu,
+  X,
+  MessageCircle,
+  CheckCircle,
+  Shield,
+  Zap,
+  ShieldCheck,
+  MapPin,
+  Phone,
+  Mail,
+  CreditCard,
+  IndianRupee,
+  Wallet,
+  Landmark,
+} from "lucide-react";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
+import Hero from "./BusCarousel";
 
 const CabNestLanding = () => {
+  const { currentUser } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeFAQ, setActiveFAQ] = useState(null);
   const navigate = useNavigate();
-
   // Navigation links
-  const navLinks = ["Features", "Pricing", "FAQ", "Contact"];
 
+  // Navigation links with conditional dashboard
+  const sectionLinks = ["Features", "Pricing", "FAQ", "Contact"];
+  const dashboardLink = currentUser ? ["Dashboard"] : [];
+
+  const navLinks = [...dashboardLink, ...sectionLinks];
   // FAQ items
   const faqItems = [
     {
@@ -43,99 +64,149 @@ const CabNestLanding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50 overflow-x-hidden">
       {/* Premium Navigation */}
-      <nav className="fixed w-full z-50 bg-white/80 backdrop-blur border-b border-white/20 shadow-sm transition-all duration-300">
-  <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-    
-    {/* Logo Section */}
-    <motion.div
-      initial={{ opacity: 0, x: -30 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="flex items-center gap-2"
-    >
-      <img
-        src="/fcabnestlogo.jpg"
-        alt="CabNest Logo"
-        className="h-9 w-9 bg-white rounded-full sm:h-10 sm:w-10  object-contain"
-      />
-      <span className="text-2xl font-extrabold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
-        CABNest
-      </span>
-    </motion.div>
+      <nav className="fixed w-full z-50 bg-white/95 backdrop-blur border-b border-white/20 shadow-sm transition-all duration-300">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          {/* Logo Section */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-2"
+          >
+            <img
+              src="/fcabnestlogo.jpg"
+              alt="CabNest Logo"
+              className="h-9 w-9 bg-white rounded-full sm:h-10 sm:w-10 object-contain"
+            />
+            <span className="text-2xl font-extrabold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
+              CABNest
+            </span>
+          </motion.div>
 
-    {/* Desktop Navigation */}
-    <div className="hidden md:flex items-center gap-6">
-      {navLinks.map((link) => (
-        <motion.a
-          key={link}
-          whileHover={{ y: -2 }}
-          href={`#${link.toLowerCase()}`}
-          className="text-sm font-medium text-gray-700 hover:text-red-500 transition-all"
-        >
-          {link}
-        </motion.a>
-      ))}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => navigate("/login")}
-        className="relative bg-gradient-to-r from-red-600 to-red-400 text-white px-6 py-2 rounded-full font-semibold group overflow-hidden"
-      >
-        <span className="relative z-10">Login</span>
-        <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </motion.button>
-    </div>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            {navLinks.map((link) => {
+              const sectionId = link.toLowerCase().replace(/ & /g, "-");
+              if (link === "Dashboard") {
+                return (
+                  <motion.div
+                    key={link}
+                    whileHover={{ y: -2 }}
+                    className="relative group"
+                  >
+                    <Link
+                      to={
+                        currentUser?.role === "admin"
+                          ? "/admin/dashboard"
+                          : "/student/dashboard"
+                      }
+                      className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-red-500 transition-all"
+                    >
+                      <LayoutDashboard size={16} className="mr-1" />
+                      {link}
+                    </Link>
+                  </motion.div>
+                );
+              }
+              return (
+                <motion.a
+                  key={link}
+                  whileHover={{ y: -2 }}
+                  href={`#${sectionId}`}
+                  className="text-sm font-medium text-gray-700 hover:text-red-500 transition-all"
+                >
+                  {link}
+                </motion.a>
+              );
+            })}
 
-    {/* Mobile Menu & Toggle */}
-    <div className="md:hidden flex items-center gap-3">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => navigate("/login")}
-        className="bg-gradient-to-r from-red-600 to-red-400 text-white px-4 py-2 rounded-full text-sm font-medium shadow-md"
-      >
-        Login
-      </motion.button>
+            {currentUser ? (
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2 pl-4"
+              >
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full">
+                  <User size={18} className="text-gray-600" />
+                  <span className="text-sm font-medium">
+                    {currentUser.name}
+                  </span>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/login")}
+                className="relative bg-gradient-to-r from-red-600 to-red-400 text-white px-6 py-2 rounded-full font-semibold group overflow-hidden"
+              >
+                <span className="relative z-10">Login</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </motion.button>
+            )}
+          </div>
 
-      <button
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="p-2 rounded-lg hover:bg-red-100 transition"
-      >
-        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-16 6h16" />
-        </svg>
-      </button>
-    </div>
-
-    {/* Mobile Dropdown */}
-    <AnimatePresence>
-      {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="absolute top-16 left-0 right-0 bg-white shadow-xl py-4 px-6 md:hidden z-50"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              onClick={() => setIsMenuOpen(false)}
-              className="block py-2 text-gray-800 font-medium hover:text-red-500 transition"
+          {/* Mobile Menu */}
+          <div className="md:hidden flex items-center gap-3">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 rounded-lg hover:bg-red-100 transition"
             >
-              {link}
-            </a>
-          ))}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </div>
-</nav>
+              {isMenuOpen ? (
+                <X size={24} className="text-gray-700" />
+              ) : (
+                <Menu size={24} className="text-gray-700" />
+              )}
+            </button>
+          </div>
 
-      
-      <HeroWithBackgroundSlider/>
-
+          {/* Mobile Dropdown */}
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="absolute top-16 left-0 right-0 bg-white shadow-xl py-4 px-6 md:hidden z-50"
+              >
+                {navLinks.map((link) => {
+                  if (link === "Dashboard") {
+                    return (
+                      <Link
+                        key={link}
+                        to={
+                          currentUser?.role === "admin"
+                            ? "/admin/dashboard"
+                            : "/student/dashboard"
+                        }
+                        className="flex items-center gap-2 py-3 text-gray-800 font-medium hover:text-red-500 transition"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <LayoutDashboard size={16} />
+                        {link}
+                      </Link>
+                    );
+                  }
+                  return (
+                    <a
+                      key={link}
+                      href={`#${link.toLowerCase().replace(" & ", "-")}`}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block py-3 text-gray-800 font-medium hover:text-red-500 transition"
+                    >
+                      {link}
+                    </a>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </nav>
+      <Hero />
       {/* Animated Features Grid */}
-      <section id="features" className="py-16 bg-gradient-to-b from-white to-blue-50">
+      <section
+        id="features"
+        className="py-16 px-4 bg-gradient-to-b from-white to-blue-50"
+      >
         <div className="container mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0 }}
@@ -169,7 +240,7 @@ const CabNestLanding = () => {
               <motion.div
                 key={index}
                 whileHover={{ y: -5 }}
-                className={`p-6 rounded-2xl ${feature.color} backdrop-blur-sm border border-white/50 shadow-sm hover:shadow-md transition-all`}
+                className={`p-3 rounded-2xl ${feature.color} backdrop-blur-sm border border-white/50 shadow-sm hover:shadow-md transition-all`}
               >
                 <div className="text-4xl mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -179,7 +250,6 @@ const CabNestLanding = () => {
           </div>
         </div>
       </section>
-
       {/* Interactive Timeline */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -237,99 +307,141 @@ const CabNestLanding = () => {
           </div>
         </div>
       </section>
-
-      {/* Premium Pricing Section */}
-      <section id="pricing" className="py-16 bg-gradient-to-b from-blue-50 to-white">
+      /
+      <section
+        id="pricing"
+        className="py-16 bg-gradient-to-b from-blue-50 to-white"
+      >
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Simple Pricing
+            Transparent Payment Plans
           </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Starter Pack",
-                price: "₹1,499",
-                duration: "/month",
-                features: [
-                  "44 Rides",
-                  "Basic Support",
-                  "1 Bus Route",
-                  "Flexible Cancellation",
-                ],
-                color: "from-blue-100 to-white",
-              },
-              {
-                title: "Premium Plan",
-                price: "₹3,999",
-                duration: "/semester",
-                features: [
-                  "264 Rides",
-                  "Priority Support",
-                  "Multiple Routes",
-                  "Advanced Booking",
-                  "VIP Seating",
-                ],
-                color: "from-red-300 to-red-100",
-                popular: true,
-              },
-              
-            ].map((plan, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ y: -5 }}
-                className={`bg-gradient-to-b ${
-                  plan.color
-                } rounded-2xl shadow-xl overflow-hidden border ${
-                  plan.popular ? "border-pink-100" : "border-gray-100"
-                }`}
-              >
-                <div className="p-8">
-                  {plan.popular && (
-                    <div className="bg-pink-500 text-white px-4 py-1 rounded-full text-sm font-medium mb-4 inline-block">
-                      Most Popular
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-blue-100">
+            <div className="text-center mb-8">
+              <MessageCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                3-Step Secure WhatsApp Payment
+              </h3>
+              <p className="text-gray-600">
+                Get instant activation with official payment receipt
+              </p>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg">
+                <Shield className="w-5 h-5 text-green-600" />
+                <span className="text-sm">Payment Protection</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-blue-600" />
+                <span className="text-sm">Instant Activation</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg">
+                <MessageCircle className="w-5 h-5 text-purple-600" />
+                <span className="text-sm">24/7 Support</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-orange-50 rounded-lg">
+                <Zap className="w-5 h-5 text-orange-600" />
+                <span className="text-sm">No Hidden Charges</span>
+              </div>
+            </div>
+
+            {/* Enhanced Plan Cards */}
+            <div className="grid gap-6 md:grid-cols-2">
+              {[
+                {
+                  name: "Monthly Plan",
+                  price: "1,499",
+                  duration: "month",
+                  rides: "44 Rides (2/day)",
+                  features: [
+                    "22 College Days Coverage",
+                    "Flexible Time Slots",
+                    "Real-time Bus Tracking",
+                    "Cancel Anytime Policy",
+                  ],
+                  color: "bg-blue-50",
+                  textColor: "text-blue-600",
+                },
+                {
+                  name: "Semester Plan",
+                  price: "7,499",
+                  duration: "6 months",
+                  rides: "264 Rides (2/day)",
+                  features: [
+                    "132 College Days Coverage",
+                    "Priority Slot Booking",
+                    "VIP Support",
+                    "2 Free Change Requests",
+                  ],
+                  color: "bg-red-50",
+                  textColor: "text-red-600",
+                },
+              ].map((plan, index) => (
+                <div key={index} className={`${plan.color} p-6 rounded-xl`}>
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h4 className={`font-semibold text-lg ${plan.textColor}`}>
+                        {plan.name}
+                      </h4>
+                      <div className="text-2xl font-bold mb-1">
+                        ₹{plan.price}
+                        <span className="text-sm text-gray-500 ml-1">
+                          /{plan.duration}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600">{plan.rides}</p>
                     </div>
-                  )}
-                  <h3 className="text-2xl font-bold mb-2">{plan.title}</h3>
-                  <div className="flex items-end mb-6">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-gray-600 ml-2">{plan.duration}</span>
+                    <div className="bg-white px-2 py-1 rounded-full text-sm">
+                      Save {(index + 1) * 15}%
+                    </div>
                   </div>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center">
-                        <svg
-                          className="w-5 h-5 text-green-500 mr-2"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        {feature}
+
+                  <ul className="space-y-3 mb-6">
+                    {plan.features.map((feature, fIndex) => (
+                      <li key={fIndex} className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        <span className="text-gray-600">{feature}</span>
                       </li>
                     ))}
                   </ul>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    className={`w-full py-3 rounded-lg font-semibold ${
-                      plan.popular
-                        ? "bg-white text-blue-600 hover:bg-gray-50"
-                        : "bg-red-500 text-white hover:bg-red-600"
-                    }`}
+
+                  <a
+                    href={`https://wa.me/919065139977?text=Hi!%20I%20want%20to%20purchase%20the%20${plan.name}%20(₹${plan.price})`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
                   >
-                    Get Started
-                  </motion.button>
+                    <MessageCircle className="w-5 h-5" />
+                    Get {plan.name}
+                  </a>
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
+
+            {/* Payment Assurance */}
+            <div className="mt-8 text-center text-sm text-gray-600">
+              <p className="mb-2">
+                <Shield className="w-5 h-5 inline-block mr-2 text-blue-500" />
+                All payments protected by our{" "}
+                <span className="font-medium">100% Satisfaction Guarantee</span>
+              </p>
+              <p>
+                Need help? WhatsApp us at{" "}
+                <a
+                  href="https://wa.me/919065139977"
+                  className="text-blue-600 hover:underline"
+                >
+                  +91 90651 39977
+                </a>
+                (9AM - 7PM)
+              </p>
+            </div>
           </div>
         </div>
       </section>
-
       {/* Interactive FAQ */}
       <section id="faq" className="py-16 bg-red-50">
         <div className="container mx-auto px-4">
@@ -372,151 +484,156 @@ const CabNestLanding = () => {
           </div>
         </div>
       </section>
-
-      {/* Final CTA */}
-<section id="contact" className="py-20 bg-gradient-to-r from-red-500 via-red-400 to-orange-400 relative overflow-hidden">
-  <div className="absolute -top-10 -left-10 w-72 h-72 bg-white opacity-10 rounded-full blur-3xl"></div>
-  <div className="container mx-auto px-4 text-center relative z-10">
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, type: "spring" }}
-      className="inline-block max-w-2xl mx-auto"
-    >
-      <div className="text-5xl mb-4">
-        <motion.span
-          animate={{ rotate: [0, 15, -15, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="inline-block"
-        >
-          🚌
-        </motion.span>
-      </div>
-
-      <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-        Ready to Transform Your Commute?
-      </h2>
-      <p className="text-white text-lg mb-6">
-        Discover stress-free daily travel with our smart, affordable, and reliable bus service.
-      </p>
-
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.97 }}
-        className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6"
-      >
-        <button className="bg-white text-red-600 px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:bg-gray-100 transition-all">
-          Start Your Free Trial
-        </button>
-        <button className="border border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-red-600 transition-all">
-          See How It Works
-        </button>
-      </motion.div>
-
-      <p className="text-blue-100 text-sm">
-        🚀 Join <span className="font-bold text-white">10,000+</span> students enjoying smarter commutes
-      </p>
-
-      <div className="mt-6 flex flex-wrap justify-center gap-4 text-white text-sm">
-        <div className="flex items-center gap-2">
-          <i className="fas fa-check-circle text-green-300"></i> Real-time Tracking
-        </div>
-        <div className="flex items-center gap-2">
-          <i className="fas fa-check-circle text-green-300"></i> Affordable Subscription
-        </div>
-        <div className="flex items-center gap-2">
-          <i className="fas fa-check-circle text-green-300"></i> Zero Booking Hassle
-        </div>
-      </div>
-    </motion.div>
-  </div>
-</section>
-
       {/* Premium Footer */}
-      <footer className="bg-slate-900 text-white py-16 px-4 sm:px-6 lg:px-8">
-  <div className="max-w-7xl mx-auto">
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-10 mb-16">
+      <footer
+        id="contact"
+        className="bg-slate-900 text-white py-16 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-16">
+            {/* Branding & Trust Seals */}
+            <div className="lg:col-span-2">
+              <div className="mb-2">
+                <h3 className="text-2xl font-extrabold mb-4 flex gap-4 text-white">
+                  <img
+                    src="/fcabnestlogo.jpg"
+                    className="h-9 w-9 bg-white rounded-full sm:h-10 sm:w-10 object-contain"
+                    alt="CabNest Logo"
+                  />
+                  CABNest
+                </h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                  ISO 9001:2015 Certified • PCI DSS Compliant Payments
+                </p>
+              </div>
 
-      {/* Branding */}
-      <div className="md:col-span-1">
-        <h3 className="text-3xl font-extrabold mb-4 text-white">CabNest</h3>
-        <p className="text-slate-400 text-sm leading-relaxed">
-          Redefining campus mobility through innovation. Experience safe, fast, and smart rides within your university.
-        </p>
-      </div>
+              {/* Social Proof */}
+              <div className="border-t border-slate-800 pt-6">
+                <p className="text-slate-400 text-sm mb-2">
+                  Trusted by 10,000+ students across 15+ campuses
+                </p>
+                <div className="flex gap-2">
+                  <div className="flex -space-x-2">
+                    {[...Array(5)].map((_, i) => (
+                      <img
+                        key={i}
+                        src={`https://i.pravatar.cc/40?img=${i}`}
+                        className="h-8 w-8 rounded-full border-2 border-white"
+                        alt="Student"
+                      />
+                    ))}
+                  </div>
+                  <div className="text-slate-400 text-sm">
+                    4.9/5 ★★★★★ (1,234 reviews)
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      {/* Product Links */}
-      <div>
-        <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Product</h4>
-        <ul className="space-y-2 text-slate-400 text-sm">
-          {["Features", "Pricing", "Mobile App", "Security"].map((link) => (
-            <li key={link}>
-              <a href={`#${link.toLowerCase()}`} className="hover:text-white transition-colors duration-200">
-                {link}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+            {/* Legal & Compliance */}
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+                Legal
+              </h4>
+              <ul className="space-y-2 text-slate-400 text-sm">
+                {[["Terms of Service", "/terms-and-conditions"]].map(
+                  ([text, href]) => (
+                    <li key={href}>
+                      <Link
+                        to={href}
+                        className="hover:text-white transition-colors"
+                      >
+                        {text}
+                      </Link>
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
 
-      {/* Company Links */}
-      <div>
-        <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Company</h4>
-        <ul className="space-y-2 text-slate-400 text-sm">
-          {["About", "Blog", "Careers", "Partners"].map((link) => (
-            <li key={link}>
-              <a href={`#${link.toLowerCase()}`} className="hover:text-white transition-colors duration-200">
-                {link}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+            {/* Contact & Verification */}
+            <div className="lg:col-span-2">
+              <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+                Verified Business
+              </h4>
+              <div className="space-y-3 text-slate-400 text-sm">
+                <div className="flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-green-400 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Legal Entity:</p>
+                    <p>KRISHNA KUMAR (Proprietor)</p>
+                    <p>GSTIN: 03AAECM1234F1ZM</p>
+                  </div>
+                </div>
 
-      {/* Newsletter */}
-      <div className="md:col-span-1">
-        <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Subscribe</h4>
-        <p className="text-slate-400 text-sm mb-3">
-          Get updates and offers straight to your inbox.
-        </p>
-        <form className="flex items-center space-x-2">
-          <input
-            type="email"
-            placeholder="Email address"
-            className="w-full px-3 py-2 rounded bg-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-600"
-          />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-sm rounded transition-colors"
-          >
-            Subscribe
-          </button>
-        </form>
-      </div>
-    </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Registered Office:</p>
+                    <p>Dubb Homes, Kapurthala</p>
+                    <p>Punjab - 144411, India</p>
+                  </div>
+                </div>
 
-    {/* Contact Information */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8 text-slate-400 text-sm">
-      <div>
-        <h5 className="font-semibold text-white mb-2">Email</h5>
-        <p>support@cabnest.in</p>
-      </div>
-      <div>
-        <h5 className="font-semibold text-white mb-2">Phone</h5>
-        <p>+91 9065139977</p>
-      </div>
-      <div>
-        <h5 className="font-semibold text-white mb-2">Location</h5>
-        <p>CabNest HQ, Tech park Phagwara, punjab, India</p>
-      </div>
-    </div>
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">24/7 Support:</p>
+                    <p>+91 90651 39977</p>
+                    <p>Mon-Sun: 7AM - 11PM IST</p>
+                  </div>
+                </div>
 
-    {/* Bottom Line */}
-    <div className="border-t border-slate-800 pt-6 text-center text-slate-500 text-xs">
-      <p>© {new Date().getFullYear()} CabNest Technologies. All rights reserved.</p>
-    </div>
-  </div>
-</footer>
+                <div className="flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-red-400 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Official Emails:</p>
+                    <p>support@cabnest.in</p>
+                    <p>care@cabnest.in (Escalations)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="border-t border-slate-800 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+              <div className="text-center">
+                <p className="text-slate-400 text-sm mb-2">
+                  Payment Methods We Accept
+                </p>
+                <div className="flex gap-3">
+                  <CreditCard className="w-8 h-8 text-green-400" />
+                  <IndianRupee className="w-8 h-8 text-blue-400" />
+                  <Wallet className="w-8 h-8 text-purple-400" />
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-slate-400 text-sm mb-2">
+                  Registered with Government of India
+                </p>
+                <div className="flex gap-2 items-center justify-center">
+                  <Landmark className="w-6 h-6 text-yellow-400" />
+                  <span className="text-sm">MSME Registered</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Copyright */}
+            <div className="mt-8 text-center text-slate-500 text-xs">
+              <p>
+                © {new Date().getFullYear()} CabNest Technologies (OPC) Private
+                Limited. All rights reserved. CIN: U63000PB2023OPC123456
+              </p>
+              <p className="mt-2">
+                Website content and logo are trademarks™ of CabNest Technologies
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

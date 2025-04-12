@@ -38,11 +38,21 @@ const admin = (req, res, next) => {
   }
 };
 
-const student = (req, res, next) => {
-  if (req.user && req.user.role === "student") {
+const student = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user || user.role !== "student") {
+      return res.status(401).json({
+        success: false,
+        error: "Not authorized as a student",
+      });
+    }
     next();
-  } else {
-    res.status(403).json({ message: "Not authorized as a student" });
+  } catch (err) {
+    res.status(401).json({
+      success: false,
+      error: "Student authorization failed",
+    });
   }
 };
 

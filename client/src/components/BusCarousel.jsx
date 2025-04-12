@@ -1,142 +1,157 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import {
+  CheckCircleIcon,
+  ShieldCheckIcon,
+  WifiIcon,
+  ClockIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
 
-// Bus images array
-const busImages = [
-  "/busImg4.webp", 
-  "/img5.png",
-  "/busImg3.jpg",
-  "/busImg1.jpg",
-  "/busImg2.jpg"
-];
+export default function Hero() {
+  const whatsappMessage = `Hi CabNest! I'd like to start the 3-day free trial. Can you help me?`;
 
-export default function HeroWithBackgroundSlider() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  
-  // Auto-slide functionality with cleanup
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % busImages.length);
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  // Function to handle manual slide change
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
-  
   return (
-    <section className="relative min-h-[650px] md:min-h-[700px] lg:h-screen overflow-hidden">
-      {/* Background slider */}
+    <section className="relative min-h-screen bg-gray-900 overflow-hidden">
+      {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
-        {busImages.map((img, index) => (
-          <div
-            key={index}
-            className="absolute inset-0 w-full h-full transition-opacity duration-1500 ease-in-out"
-            style={{ opacity: currentIndex === index ? 1 : 0 }}
+        <img
+          src="/busImg2.webp"
+          alt="Campus transportation background"
+          className="w-full h-full object-contain opacity-50"
+          loading="eager"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/40" />
+      </div>
+
+      {/* Content container */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex flex-col items-center justify-center pt-20 pb-12 md:py-24">
+        {/* Trust Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 text-center"
+        >
+          <span className="inline-block bg-red-600/20 text-red-400 px-4 py-2 rounded-full text-sm font-medium">
+            🚌 Trusted by 10,000+ Students
+          </span>
+        </motion.div>
+
+        {/* Full-width Feature Image */}
+
+        {/* Text Content */}
+        <div className="w-full max-w-3xl text-center">
+          <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-6 text-white"
+          >
+            Premium Campus
+            <span className="block bg-gradient-to-r from-red-400 to-red-300 bg-clip-text text-transparent mt-2 md:mt-3">
+              Transportation Solution
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg md:text-xl text-gray-200 mb-8 md:mb-10 leading-relaxed"
+          >
+            Safe, reliable, and comfortable shuttle service with
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="w-full max-w-4xl mx-auto mb-8 md:mb-12 lg:mb-16"
           >
             <img
-              src={img}
-              alt={`Premium campus bus service ${index + 1}`}
-              className="w-full h-full object-cover object-center"
-              loading={index === 0 ? "eager" : "lazy"}
+              src="/img5.webp"
+              alt="Modern campus shuttle bus with full amenities"
+              className="w-full h-auto object-contain rounded-xl shadow-xl"
             />
-            {/* Enhanced overlay gradient for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/40" />
-          </div>
-        ))}
-      </div>
-      
-      {/* Dots indicator - improved positioning */}
-      <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2.5 z-20">
-        {busImages.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-2 md:w-2.5 h-2 md:h-2.5 rounded-full transition-all ${
-              currentIndex === index ? "bg-red-400 w-5 md:w-8" : "bg-white/60 hover:bg-white/80"
-            }`}
-            aria-label={`View slide ${index + 1}`}
-          />
-        ))}
-      </div>
-      
-      {/* Content container */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
-  <div className="w-full flex flex-col items-center lg:items-start justify-center py-12 md:py-16">
-    
-    {/* Hero Text */}
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7 }}
-      className="w-full max-w-3xl mt-10 text-center lg:text-left text-white"
-    >
-      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-5 md:mb-8 tracking-tight">
-        Rush Free & Premium
-        <span className="block bg-gradient-to-r from-red-400 to-red-200 bg-clip-text text-transparent mt-3 lg:ml-10">
-          Campus Commutes
-        </span>
-      </h1>
+          </motion.div>
 
-      <p className="text-base sm:text-lg md:text-xl text-gray-100 mb-10 max-w-xl mx-auto lg:mx-0">
-        Experience premium AC transport with AI-powered scheduling. <strong>44 rides/month</strong>, 
-        <span className="hidden md:inline"> your timetable, your rules.</span>
-      </p>
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col xs:flex-row gap-4 justify-center"
+          >
+            <a
+              href={`https://wa.me/919065139977?text=${encodeURIComponent(
+                whatsappMessage
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl font-semibold flex items-center justify-center gap-3 transition-transform hover:scale-105"
+            >
+              <span>🚀</span>
+              Start Free Trial via WhatsApp
+            </a>
 
-      {/* CTA Buttons */}
-      <div className="flex flex-col gap-4 items-center lg:items-start">
-        <motion.button
-          whileHover={{
-            y: -3,
-            boxShadow: "0 12px 30px -6px rgba(239, 68, 68, 0.5)"
-          }}
-          transition={{ type: "spring", stiffness: 500 }}
-          className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-red-600 to-red-400 text-white rounded-2xl font-semibold shadow-lg transition-all text-base"
-        >
-          🚀 Start Free Trial
-        </motion.button>
+            <button className="px-6 py-3 sm:px-8 sm:py-4 bg-white/5 border border-white/20 text-white rounded-xl font-semibold flex items-center justify-center gap-3 backdrop-blur-sm hover:bg-white/10 transition-all">
+              <span>📜</span>
+              View Safety Features
+            </button>
+          </motion.div>
 
-        <motion.button
-          whileHover={{
-            y: -3,
-            backgroundColor: "rgba(255, 255, 255, 0.08)"
-          }}
-          transition={{ type: "spring", stiffness: 500 }}
-          className="px-6 sm:px-8 py-3 sm:py-4 border border-white/40 text-white rounded-2xl font-semibold hover:bg-white/10 backdrop-blur-md transition-all text-base"
-        >
-          ▶️ Watch Video Tour
-        </motion.button>
-      </div>
-    </motion.div>
-
-    {/* Features List */}
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, delay: 0.3 }}
-      className="flex flex-wrap justify-center lg:justify-start gap-4 mt-14"
-    >
-      {[
-        { icon: "🚌", text: "Premium AC Buses" },
-        { icon: "⚡", text: "USB Charging" },
-        { icon: "📱", text: "Tracking" },
-        { icon: "🔒", text: "Safe & Secure" }
-      ].map((feature, index) => (
-        <div 
-          key={index}
-          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md px-4 py-2 rounded-full transition-all duration-200"
-        >
-          <span className="text-xl">{feature.icon}</span>
-          <span className="text-sm font-medium text-white">{feature.text}</span>
+          {/* Features Grid */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="grid grid-cols-1 xs:grid-cols-2 gap-4 mt-8 md:mt-12"
+          >
+            {[
+              {
+                icon: <UserGroupIcon className="w-6 h-6 text-red-400" />,
+                text: "1K+ Daily Riders",
+              },
+              {
+                icon: <ShieldCheckIcon className="w-6 h-6 text-red-400" />,
+                text: "Insured Vehicles",
+              },
+              {
+                icon: <WifiIcon className="w-6 h-6 text-red-400" />,
+                text: "Free WiFi",
+              },
+              {
+                icon: <ClockIcon className="w-6 h-6 text-red-400" />,
+                text: "95% On-Time",
+              },
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 p-3 md:p-4 bg-white/5 rounded-xl backdrop-blur-sm"
+              >
+                {feature.icon}
+                <span className="text-gray-100 text-sm md:text-base font-medium">
+                  {feature.text}
+                </span>
+              </div>
+            ))}
+          </motion.div>
         </div>
-      ))}
-    </motion.div>
-  </div>
-</div>
 
+        {/* Trust Badges */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="flex flex-wrap justify-center gap-4 mt-8 md:mt-12"
+        >
+          <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full backdrop-blur-sm">
+            <ShieldCheckIcon className="w-5 h-5 text-green-400" />
+            <span className="text-sm text-white">ISO Certified</span>
+          </div>
+          <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full backdrop-blur-sm">
+            <CheckCircleIcon className="w-5 h-5 text-blue-400" />
+            <span className="text-sm text-white">GST Registered</span>
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 }

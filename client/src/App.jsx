@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./contexts/AuthContext";
 
@@ -15,7 +15,10 @@ import MyBookings from "./components/student/MyBookings";
 import Dashboard from "./components/admin/Dashboard";
 import SlotManagement from "./components/admin/SlotManagement";
 import StudentManagement from "./components/admin/StudentManagement";
+import TermsConditions from "./components/TermsConditions";
+import PlansAdmin from "./components/admin/PlansAdmin";
 
+import Plans from "./components/student/Plans";
 const PrivateRoute = ({ element, requiredRole }) => {
   const { currentUser, loading } = useContext(AuthContext);
 
@@ -41,28 +44,26 @@ const PrivateRoute = ({ element, requiredRole }) => {
 function App() {
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const element = document.getElementById(hash.replace("#", ""));
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Install PWA button */}
-      {/* <InstallPWA /> */}
-
-      {/* Header */}
-      {/* Hide Header only on landing page */}
       {location.pathname !== "/" && <Header />}
 
       <div className="flex-1">
         <Routes>
-          {/* Public route */}
           <Route path="/" element={<CabNestLanding />} />
-
-          {/* Auth routes */}
+          <Route path="/terms-and-conditions" element={<TermsConditions />} />
           <Route path="/login" element={<Login />} />
-
-          {/* This route is now protected below – remove public access to /register */}
-          {/* <Route path="/register" element={!currentUser ? <Register /> : <Navigate to="/" />} /> */}
-
-          {/* Default route — redirects to appropriate view based on role */}
+          <Route path="/register" element={<Register />} />
           <Route
             path="/student/dashboard"
             element={
@@ -79,7 +80,6 @@ function App() {
               />
             }
           />
-
           {/* Student-specific route */}
           <Route
             path="/my-bookings"
@@ -93,8 +93,13 @@ function App() {
                 requiredRole="student"
               />
             }
+          />{" "}
+          <Route
+            path="/student/plans"
+            element={
+              <PrivateRoute element={<Plans />} requiredRole="student" />
+            }
           />
-
           {/* Admin-only routes */}
           <Route
             path="/admin/dashboard"
@@ -135,15 +140,13 @@ function App() {
               />
             }
           />
-
-          {/* Only admin can register students */}
           <Route
-            path="/register"
+            path="/admin/plans"
             element={
               <PrivateRoute
                 element={
                   <Layout>
-                    <Register />
+                    <PlansAdmin />
                   </Layout>
                 }
                 requiredRole="admin"

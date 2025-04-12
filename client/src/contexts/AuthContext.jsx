@@ -75,7 +75,29 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     setCurrentUser(null);
   };
+  const updateUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return false;
 
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/api/students/me`,
+        config
+      );
+
+      setCurrentUser(data);
+      return true;
+    } catch (error) {
+      console.error("Error updating user data:", error);
+      return false;
+    }
+  };
   const value = {
     currentUser,
     login,
@@ -83,6 +105,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     loading,
     error,
+    updateUserData,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -2,7 +2,19 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext";
-import { Calendar, Clock, MapPin, Bus, AlertTriangle, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Bus,
+  AlertTriangle,
+  X,
+  RotateCw,
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 
 const MyBookings = () => {
   const { currentUser } = useContext(AuthContext);
@@ -10,6 +22,9 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [cancelSuccess, setCancelSuccess] = useState("");
+  const [showAllBookings, setShowAllBookings] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBookings();
@@ -32,7 +47,11 @@ const MyBookings = () => {
         config
       );
 
-      setBookings(response.data.bookings || []);
+      const sortedBookings = response.data.bookings.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+
+      setBookings(sortedBookings);
     } catch (err) {
       setError("Failed to load your bookings");
       console.error(err);
@@ -42,183 +61,327 @@ const MyBookings = () => {
   };
 
   const cancelBooking = async (bookingId) => {
-    if (!window.confirm("Are you sure you want to cancel this booking?")) {
-      return;
-    }
-
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
 
-      await axios.post(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/students/bookings/cancel/${bookingId}`,
-        {},
+      await axios.delete(
+        `${import.meta.env.VITE_BASE_URL}/api/students/bookings/${bookingId}`,
         config
       );
 
+      setBookings((prev) => prev.filter((b) => b._id !== bookingId));
       setCancelSuccess("Booking cancelled successfully");
-
-      // Remove the cancelled booking from the state
-      setBookings(bookings.filter((booking) => booking._id !== bookingId));
-
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setCancelSuccess("");
-      }, 3000);
+      setTimeout(() => setCancelSuccess(""), 3000);
     } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
       setError(err.response?.data?.message || "Failed to cancel booking");
-
-      // Clear error message after 3 seconds
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+      setTimeout(() => setError(""), 3000);
     }
   };
 
+  const formatDateTime = (dateString) => {
+    const options = {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
   const formatDate = (dateString) => {
     const options = {
-      weekday: "long",
+      weekday: "short",
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const formatTime = (timeString) => {
-    const time = new Date(`2022-01-01T${timeString}`);
-    return time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  const isBookingCancellable = (date) => {
-    const bookingDate = new Date(date);
+  const isBookingCancellable = (bookingDateTime) => {
     const now = new Date();
-
-    // Calculate the hours difference
-    const hoursDiff = (bookingDate - now) / (1000 * 60 * 60);
-
-    // Return true if booking is more than 6 hours in future
-    return hoursDiff > 6;
+    const bookingDate = new Date(bookingDateTime);
+    return bookingDate - now > 60 * 60 * 1000;
   };
 
-  // Group bookings by date
-  const groupedBookings = bookings.reduce((acc, booking) => {
-    const date = booking.date.split("T")[0];
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(booking);
-    return acc;
-  }, {});
+  const getCancellationDeadline = (bookingDateTime) => {
+    const bookingDate = new Date(bookingDateTime);
+    const deadline = new Date(bookingDate.getTime() - 60 * 60 * 1000);
+    return deadline.toLocaleString([], {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const filteredBookings = bookings.filter((booking) => {
+    const formattedDate = formatDateTime(booking.date).toLowerCase();
+    return formattedDate.includes(searchQuery.toLowerCase());
+  });
+
+  const currentBookings = filteredBookings.filter(
+    (booking) =>
+      new Date(booking.date) >= new Date(new Date().setHours(0, 0, 0, 0))
+  );
+
+  const pastBookings = filteredBookings.filter(
+    (booking) =>
+      new Date(booking.date) < new Date(new Date().setHours(0, 0, 0, 0))
+  );
+
+  const Alert = ({ message, type, onClose }) => (
+    <div
+      className={`p-4 rounded-lg mb-6 flex items-center justify-between border ${
+        type === "error"
+          ? "bg-red-50 border-red-200 text-red-700"
+          : "bg-green-50 border-green-200 text-green-700"
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        {type === "error" ? (
+          <AlertTriangle size={20} />
+        ) : (
+          <CheckCircle size={20} />
+        )}
+        <span>{message}</span>
+      </div>
+      <button onClick={onClose} className="hover:opacity-75">
+        <X size={18} />
+      </button>
+    </div>
+  );
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 md:px-8 lg:px-12">
+    <div className="max-w-6xl mx-auto mb-20 py-8 px-4 md:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">My Bookings</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <Calendar size={28} className="text-indigo-600" />
+          My Bookings
+        </h1>
         <p className="text-gray-600">Manage your upcoming and past rides</p>
       </div>
 
-      {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <AlertTriangle size={18} className="mr-2" />
-            <span>{error}</span>
-          </div>
-          <button onClick={() => setError("")}>
-            <X size={18} />
-          </button>
+      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-lg">
+        <div className="flex items-center gap-3">
+          <AlertTriangle size={20} className="text-blue-600" />
+          <p className="text-sm text-blue-800">
+            You can cancel bookings up to 1 hour before the scheduled ride time.
+          </p>
         </div>
-      )}
+      </div>
 
+      {error && (
+        <Alert message={error} type="error" onClose={() => setError("")} />
+      )}
       {cancelSuccess && (
-        <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-6 flex items-center justify-between">
-          <span>{cancelSuccess}</span>
-          <button onClick={() => setCancelSuccess("")}>
-            <X size={18} />
-          </button>
-        </div>
+        <Alert
+          message={cancelSuccess}
+          type="success"
+          onClose={() => setCancelSuccess("")}
+        />
       )}
 
       {loading ? (
-        <div className="text-center py-10">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
-          <p className="mt-2 text-gray-600">Loading your bookings...</p>
+        <div className="text-center py-12 space-y-4">
+          <RotateCw className="w-8 h-8 mx-auto animate-spin text-indigo-600" />
+          <p className="text-gray-600">Loading your bookings...</p>
         </div>
       ) : bookings.length === 0 ? (
-        <div className="card text-center py-10">
-          <div className="text-gray-400 mb-4">
-            <Calendar size={48} className="mx-auto" />
+        <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
+          <div className="max-w-md mx-auto">
+            <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No Bookings Found
+            </h3>
+            <p className="text-gray-600 mb-6">
+              You haven't booked any rides yet. Start your journey with us!
+            </p>
+            <a
+              href="/student/dashboard"
+              className="inline-block px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              Book a Ride
+            </a>
           </div>
-          <h3 className="text-xl font-medium text-gray-800 mb-2">
-            No bookings found
-          </h3>
-          <p className="text-gray-600 mb-4">
-            You haven't booked any rides yet.
-          </p>
-          <a href="/" className="btn btn-primary inline-block">
-            Book a Ride
-          </a>
         </div>
       ) : (
-        <div className="space-y-8">
-          {Object.entries(groupedBookings)
-            .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
-            .map(([date, bookingsForDate]) => (
-              <div key={date} className="card">
-                <div className="border-b pb-4 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <Calendar size={20} className="text-indigo-600" />
-                    <h2 className="text-lg font-medium">{formatDate(date)}</h2>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  {bookingsForDate.map((booking) => (
-                    <div
-                      key={booking._id}
-                      className="border-l-4 border-indigo-500 pl-4 py-1"
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                        <div className="mb-4 md:mb-0">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <MapPin size={16} className="text-indigo-600" />
-                            <div className="font-medium">To College</div>
-                          </div>
-                          <div className="ml-6 text-gray-600">
-                            Departure: {formatTime(booking.goSlot.time)}
-                          </div>
-                        </div>
-
-                        <div className="mb-4 md:mb-0">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Bus size={16} className="text-indigo-600" />
-                            <div className="font-medium">From College</div>
-                          </div>
-                          <div className="ml-6 text-gray-600">
-                            Departure: {formatTime(booking.returnSlot.time)}
-                          </div>
-                        </div>
-
-                        {isBookingCancellable(date) && (
-                          <button
-                            onClick={() => cancelBooking(booking._id)}
-                            className="btn btn-danger mt-4 md:mt-0"
-                          >
-                            Cancel
-                          </button>
-                        )}
-                      </div>
+        <div className="space-y-6">
+          {/* Current Bookings Cards */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <MapPin size={20} className="text-green-600" />
+              Upcoming Rides ({currentBookings.length})
+            </h2>
+            {currentBookings.map((booking) => (
+              <div
+                key={booking._id}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Calendar size={16} className="text-indigo-600" />
+                      <span className="font-medium">
+                        {formatDateTime(booking.date)}
+                      </span>
                     </div>
-                  ))}
+                    <div className="text-sm text-gray-500">
+                      Cancel before: {getCancellationDeadline(booking.date)}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Clock size={16} className="text-indigo-600" />
+                      <span className="text-gray-700">
+                        Pickup:{" "}
+                        {new Date(
+                          `2022-01-01T${booking.goSlot.time}`
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock size={16} className="text-indigo-600" />
+                      <span className="text-gray-700">
+                        Return:{" "}
+                        {new Date(
+                          `2022-01-01T${booking.returnSlot.time}`
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end">
+                    {isBookingCancellable(booking.date) ? (
+                      <button
+                        onClick={() => cancelBooking(booking._id)}
+                        className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors flex items-center gap-2"
+                      >
+                        <X size={16} />
+                        Cancel Booking
+                      </button>
+                    ) : (
+                      <div className="text-sm text-gray-500">
+                        <X size={16} className="inline mr-1" />
+                        Cancellation expired
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* All Bookings Toggle */}
+          <div className="border-t pt-6 mt-6">
+            <button
+              onClick={() => setShowAllBookings(!showAllBookings)}
+              className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700"
+            >
+              {showAllBookings ? (
+                <ChevronUp size={18} />
+              ) : (
+                <ChevronDown size={18} />
+              )}
+              {showAllBookings ? "Hide" : "Show"} All Bookings (
+              {bookings.length})
+            </button>
+
+            {showAllBookings && (
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50 text-left text-sm font-medium text-gray-500">
+                      <th className="p-3 border-b">Date & Time</th>
+                      <th className="p-3 border-b">Pickup</th>
+                      <th className="p-3 border-b">Return</th>
+                      <th className="p-3 border-b">Status</th>
+                      <th className="p-3 border-b">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredBookings.map((booking) => {
+                      const isCurrent = new Date(booking.date) >= new Date();
+                      return (
+                        <tr key={booking._id} className="hover:bg-gray-50">
+                          <td className="p-3 border-b whitespace-nowrap">
+                            {formatDate(booking.date)}
+                          </td>
+                          <td className="p-3 border-b whitespace-nowrap">
+                            {new Date(
+                              `2022-01-01T${booking.goSlot.time}`
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </td>
+                          <td className="p-3 border-b whitespace-nowrap">
+                            {new Date(
+                              `2022-01-01T${booking.returnSlot.time}`
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </td>
+                          <td className="p-3 border-b whitespace-nowrap">
+                            <span
+                              className={`px-2 py-1 rounded-full text-sm ${
+                                isCurrent
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {isCurrent ? "Upcoming" : "Completed"}
+                            </span>
+                          </td>
+                          <td className="p-3 border-b whitespace-nowrap">
+                            {isCurrent && isBookingCancellable(booking.date) ? (
+                              <button
+                                onClick={() => cancelBooking(booking._id)}
+                                className="text-red-600 hover:text-red-700 text-sm"
+                              >
+                                Cancel
+                              </button>
+                            ) : (
+                              <span className="text-gray-400 text-sm">
+                                {isCurrent ? "Non-cancellable" : "Completed"}
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {filteredBookings.length === 0 && (
+                  <div className="text-center py-4 text-gray-500">
+                    No bookings match your search
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
