@@ -118,7 +118,7 @@ export default function Hero() {
                 },
                 {
                   icon: <WifiIcon className="w-6 h-6 text-red-400" />,
-                  text: "Fully Air-Conditioned",
+                  text: "Fully Air-Conditioned Buses",
                 },
                 {
                   icon: <ClockIcon className="w-6 h-6 text-red-400" />,
