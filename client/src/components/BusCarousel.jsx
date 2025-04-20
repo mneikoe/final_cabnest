@@ -5,6 +5,7 @@ import {
   WifiIcon,
   ClockIcon,
   UserGroupIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Hero() {
@@ -117,8 +118,8 @@ export default function Hero() {
                   text: "Insured Vehicles",
                 },
                 {
-                  icon: <WifiIcon className="w-6 h-6 text-red-400" />,
-                  text: "Fully Air-Conditioned Buses",
+                  icon: <Cog6ToothIcon className="w-6 h-6 text-red-400" />,
+                  text: "AC Buses",
                 },
                 {
                   icon: <ClockIcon className="w-6 h-6 text-red-400" />,
