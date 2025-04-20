@@ -47,10 +47,9 @@ const Register = () => {
   };
 
   const locations = [
-    "Delhi",
-    "RamaMandi/DeepNagar/AGI",
+    "RamaMandi/DeepNagar",
     "Phagwara",
-    "LawGate/HardasPur/Maheru/Chaheru",
+    "LawGate/HardasPur/Maheru/Chaheru/AGI",
   ];
 
   const staggerVariants = {

@@ -391,9 +391,9 @@ const CabNestLanding = () => {
                 },
                 {
                   name: "Semester Plan",
-                  price: "4,499",
-                  duration: "6 months",
-                  rides: "264 Rides (2/day)",
+                  price: "4,477",
+                  duration: "4 months",
+                  rides: "176 Rides (2/day)",
                   features: [
                     "132 College Days Coverage",
                     "Priority Slot Booking",
@@ -585,7 +585,7 @@ const CabNestLanding = () => {
                   <ShieldCheck className="w-5 h-5 text-green-400 flex-shrink-0" />
                   <div>
                     <p className="font-medium">Legal Entity:</p>
-                    <p>KRISHNA KUMAR (Proprietor)</p>
+                    <p>ABHISHEK RAJ (Proprietor)</p>
                     <p>GSTIN: 03AAECM1234F1ZM</p>
                   </div>
                 </div>

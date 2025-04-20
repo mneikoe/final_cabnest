@@ -91,7 +91,7 @@ export default function Hero() {
                 className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl font-semibold flex items-center justify-center gap-3 transition-transform hover:scale-105"
               >
                 <span>🚀</span>
-                Start Free Trial via WhatsApp
+                Start 3 Days Free Trial via WhatsApp
               </a>
 
               <button className="px-6 py-3 sm:px-8 sm:py-4 bg-white/5 border border-white/20 text-white rounded-xl font-semibold flex items-center justify-center gap-3 backdrop-blur-sm hover:bg-white/10 transition-all">
@@ -118,7 +118,7 @@ export default function Hero() {
                 },
                 {
                   icon: <WifiIcon className="w-6 h-6 text-red-400" />,
-                  text: "Free WiFi",
+                  text: "Fully Air-Conditioned",
                 },
                 {
                   icon: <ClockIcon className="w-6 h-6 text-red-400" />,

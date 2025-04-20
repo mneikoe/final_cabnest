@@ -67,10 +67,9 @@ const PlansAdmin = () => {
     name: "",
   });
   const allowedLocations = [
-    "Delhi",
-    "RamaMandi/DeepNagar/AGI",
+    "RamaMandi/DeepNagar",
     "Phagwara",
-    "LawGate/HardasPur/Maheru/Chaheru",
+    "LawGate/HardasPur/Maheru/Chaheru/AGI",
   ];
 
   const fetchPlans = async () => {
