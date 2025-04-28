@@ -573,21 +573,21 @@ const CabNestLanding = () => {
               </ul>
               <div className="flex mt-5 gap-3 ml-2">
                 <a
-                  href="https://instagram.com/yourprofile"
+                  href="https://www.instagram.com/cabnest.co.in?igsh=MXNoc3ljbTRuOTJhNg=="
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
-                <a
+                {/* <a
                   href="https://linkedin.com/company/yourcompany"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
                   <Linkedin className="w-5 h-5" />
-                </a>
+                </a>*/}
               </div>
             </div>
 
