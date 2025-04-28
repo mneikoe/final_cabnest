@@ -19,6 +19,8 @@ import {
   IndianRupee,
   Wallet,
   Landmark,
+  Instagram,
+  Linkedin,
 } from "lucide-react";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
@@ -433,7 +435,7 @@ const CabNestLanding = () => {
                   </ul>
 
                   <a
-                    href={`https://wa.me/9815505777?text=Hi!%20I%20want%20to%20purchase%20the%20${plan.name}%20(₹${plan.price})`}
+                    href={`https://wa.me/7717723607?text=Hi!%20I%20want%20to%20purchase%20the%20${plan.name}%20(₹${plan.price})`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
@@ -455,10 +457,10 @@ const CabNestLanding = () => {
               <p>
                 Need help? WhatsApp us at{" "}
                 <a
-                  href="https://wa.me/9815505777"
+                  href="https://wa.me/7717723607"
                   className="text-blue-600 hover:underline"
                 >
-                  +91 98155 05777
+                  +91 7717723607
                 </a>
                 (9AM - 7PM)
               </p>
@@ -536,7 +538,7 @@ const CabNestLanding = () => {
                 <p className="text-slate-400 text-sm mb-2">
                   Trusted by 10,000+ students across 15+ campuses
                 </p>
-                <div className="flex gap-2">
+                <div className="flex gap-4 items-center">
                   <div className="flex -space-x-2">
                     {[...Array(5)].map((_, i) => (
                       <img
@@ -547,18 +549,14 @@ const CabNestLanding = () => {
                       />
                     ))}
                   </div>
-                  <div className="text-slate-400 text-sm">
-                    4.9/5 ★★★★★ (1,234 reviews)
-                  </div>
+
+                  <div className="text-slate-400 text-sm">4.9/5 ★★★★★</div>
                 </div>
               </div>
             </div>
 
             {/* Legal & Compliance */}
             <div>
-              <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
-                Legal
-              </h4>
               <ul className="space-y-2 text-slate-400 text-sm">
                 {[["Terms of Service", "/terms-and-conditions"]].map(
                   ([text, href]) => (
@@ -573,6 +571,24 @@ const CabNestLanding = () => {
                   )
                 )}
               </ul>
+              <div className="flex mt-5 gap-3 ml-2">
+                <a
+                  href="https://instagram.com/yourprofile"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://linkedin.com/company/yourcompany"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              </div>
             </div>
 
             {/* Contact & Verification */}
@@ -586,7 +602,6 @@ const CabNestLanding = () => {
                   <div>
                     <p className="font-medium">Legal Entity:</p>
                     <p>ABHISHEK RAJ (Proprietor)</p>
-                    <p>GSTIN: 03AAECM1234F1ZM</p>
                   </div>
                 </div>
 
@@ -603,7 +618,7 @@ const CabNestLanding = () => {
                   <Phone className="w-5 h-5 text-purple-400 flex-shrink-0" />
                   <div>
                     <p className="font-medium">24/7 Support:</p>
-                    <p>+91 9815505777</p>
+                    <p>+91 7717723607</p>
                     <p>Mon-Sun: 7AM - 11PM IST</p>
                   </div>
                 </div>
@@ -613,7 +628,6 @@ const CabNestLanding = () => {
                   <div>
                     <p className="font-medium">Official Emails:</p>
                     <p>cabnest.info@gmail.com</p>
-                    <p>care@cabnest.in (Escalations)</p>
                   </div>
                 </div>
               </div>
@@ -649,7 +663,7 @@ const CabNestLanding = () => {
             <div className="mt-8 text-center text-slate-500 text-xs">
               <p>
                 © {new Date().getFullYear()} CabNest Technologies (OPC) Private
-                Limited. All rights reserved. CIN: U63000PB2023OPC123456
+                Limited. All rights reserved.
               </p>
               <p className="mt-2">
                 Website content and logo are trademarks™ of CabNest Technologies

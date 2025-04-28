@@ -67,8 +67,8 @@ const PlansAdmin = () => {
     name: "",
   });
   const allowedLocations = [
-    "RamaMandi/DeepNagar",
-    "Phagwara",
+    "RamaMandi/Dakoha",
+    "DeepNagar/Phagwara(all locations)",
     "LawGate/HardasPur/Maheru/Chaheru/AGI",
   ];
 

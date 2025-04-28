@@ -84,7 +84,7 @@ export default function Hero() {
               className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 mb-10"
             >
               <a
-                href={`https://wa.me/9815505777?text=${encodeURIComponent(
+                href={`https://wa.me/7717723607?text=${encodeURIComponent(
                   whatsappMessage
                 )}`}
                 target="_blank"

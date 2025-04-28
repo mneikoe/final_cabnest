@@ -66,8 +66,8 @@ const SlotManagement = () => {
   const [selectedLocation, setSelectedLocation] = useState("Delhi");
   const [selectedDirection, setSelectedDirection] = useState("");
   const [locations] = useState([
-    "RamaMandi/DeepNagar",
-    "Phagwara",
+    "RamaMandi/Dakoha",
+    "DeepNagar/Phagwara(all locations)",
     "LawGate/HardasPur/Maheru/Chaheru/AGI",
   ]);
   const [editSlot, setEditSlot] = useState(null);
