@@ -435,7 +435,7 @@ const CabNestLanding = () => {
                   </ul>
 
                   <a
-                    href={`https://wa.me/7717723607?text=Hi!%20I%20want%20to%20purchase%20the%20${plan.name}%20(₹${plan.price})`}
+                    href={`https://wa.me/9815505777?text=Hi!%20I%20want%20to%20purchase%20the%20${plan.name}%20(₹${plan.price})`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
@@ -457,10 +457,10 @@ const CabNestLanding = () => {
               <p>
                 Need help? WhatsApp us at{" "}
                 <a
-                  href="https://wa.me/7717723607"
+                  href="https://wa.me/9815505777?text=Hi!%20I%20need%20help%20with%20my%20CabNest%20account."
                   className="text-blue-600 hover:underline"
                 >
-                  +91 7717723607
+                  +91 9815505777
                 </a>
                 (9AM - 7PM)
               </p>
@@ -618,6 +618,7 @@ const CabNestLanding = () => {
                   <Phone className="w-5 h-5 text-purple-400 flex-shrink-0" />
                   <div>
                     <p className="font-medium">24/7 Support:</p>
+                    <p>+91 9815505777</p>
                     <p>+91 7717723607</p>
                     <p>Mon-Sun: 7AM - 11PM IST</p>
                   </div>
