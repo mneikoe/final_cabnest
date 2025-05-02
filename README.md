@@ -6,41 +6,24 @@ This is a live project deployed for a real-world client and currently in product
 To set up and run the project on your local machine, please follow the steps below carefully:
 
 Clone the Repository
-
-bash
-Copy
-Edit
 git clone <repository-url>
-Open the Project in VS Code
 
+Open the Project in VS Code
 Navigate to the cloned folder and open it using Visual Studio Code.
 
 Install Dependencies
 
 Open the terminal in VS Code and run:
-
-bash
-Copy
-Edit
 npm install
+
 Environment Setup
-
 Create a .env file in the root directory.
-
 Add your MongoDB connection string and JWT secret:
-
-ini
-Copy
-Edit
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 Run the Application
 
 Start the server using:
-
-bash
-Copy
-Edit
 npm run dev
 The application should now be running at:
 http://localhost:PORT
