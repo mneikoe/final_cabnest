@@ -1,8 +1,10 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
+import GoogleLoginButton from "../../components/GoogleLoginButton";
 import { LogIn } from "lucide-react";
 import { motion } from "framer-motion";
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -107,6 +109,9 @@ const Login = () => {
               <p className="text-gray-400">
                 Continue your premium campus experience
               </p>
+              <div className="w-full mt-4 max-w-md">
+                <GoogleLoginButton className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-600 bg-[#302447] px-4 py-3 text-white transition-colors hover:bg-[#3d2c5a]" />
+              </div>
             </motion.div>
 
             {/* Error Message */}
@@ -230,7 +235,22 @@ const Login = () => {
               </motion.button>
             </form>
 
-            {/* Additional Links */}
+            {/* Forgot Password link below form */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-4 text-center text-gray-400 text-sm"
+            >
+              <Link
+                to="/forgot-password"
+                className="text-red-400 hover:text-red-300 font-medium"
+              >
+                Forgot Password?
+              </Link>
+            </motion.div>
+
+            {/* New commuter register link */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

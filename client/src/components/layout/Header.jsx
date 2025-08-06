@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import {
@@ -13,7 +13,30 @@ import {
 const Header = () => {
   const { currentUser, logout } = useContext(AuthContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const location = useLocation();
+
+  // Ref for dropdown container to handle outside click
+  const dropdownRef = useRef(null);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Close mobile menu when navigation changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setProfileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <header className="bg-white border-b border-gray-100">
@@ -37,24 +60,42 @@ const Header = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             {currentUser ? (
-              <div className="relative group">
-                <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+              <div className="relative" ref={dropdownRef}>
+                {/* Clickable profile button */}
+                <button
+                  onClick={() => setProfileMenuOpen((open) => !open)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 select-none"
+                  aria-haspopup="true"
+                  aria-expanded={profileMenuOpen}
+                  type="button"
+                >
                   <User size={18} className="text-gray-600" />
                   <span className="font-medium">{currentUser.name}</span>
                   <ChevronDown
                     size={16}
-                    className="text-gray-500 group-hover:rotate-180 transition-transform"
+                    className={`text-gray-500 transition-transform ${
+                      profileMenuOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
 
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                {/* Dropdown menu */}
+                <div
+                  className={`absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 transition-opacity duration-200 ${
+                    profileMenuOpen
+                      ? "opacity-100 visible"
+                      : "opacity-0 invisible"
+                  }`}
+                >
                   <div className="p-4 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 truncate">
                       {currentUser.email}
                     </p>
-                    <div className="mt-1 flex items-center gap-2">
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                        {currentUser.role}
+                        {currentUser.isEmailVerified
+                          ? "Verified"
+                          : "Unverified"}
                       </span>
                       {currentUser.role === "student" && (
                         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
@@ -64,11 +105,12 @@ const Header = () => {
                     </div>
                   </div>
 
-                  <div className="p-2">
+                  <div className="p-2 flex flex-col gap-1">
                     {currentUser.role === "student" && (
                       <Link
                         to="/student/dashboard"
                         className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                        onClick={() => setProfileMenuOpen(false)}
                       >
                         <LayoutDashboard size={16} className="text-gray-600" />
                         Dashboard
@@ -78,14 +120,19 @@ const Header = () => {
                       <Link
                         to="/admin/dashboard"
                         className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                        onClick={() => setProfileMenuOpen(false)}
                       >
                         <LayoutDashboard size={16} className="text-gray-600" />
                         Admin Dashboard
                       </Link>
                     )}
                     <button
-                      onClick={logout}
+                      onClick={() => {
+                        setProfileMenuOpen(false);
+                        logout();
+                      }}
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-sm font-medium text-red-600"
+                      type="button"
                     >
                       <LogOut size={16} />
                       Logout
@@ -113,8 +160,10 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setMobileMenuOpen((open) => !open)}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label={`${mobileMenuOpen ? "Close" : "Open"} menu`}
+            type="button"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -126,16 +175,17 @@ const Header = () => {
             {currentUser ? (
               <>
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-gray-900 truncate">
                     {currentUser.name}
                   </p>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-gray-600 mt-1 truncate">
                     {currentUser.email}
                   </p>
-                  <div className="mt-3 flex gap-2">
+                  <div className="mt-3 flex gap-2 flex-wrap">
                     <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                      {currentUser.role}
+                      {currentUser.isEmailVerified ? "Verified" : "Unverified"}
                     </span>
+
                     {currentUser.role === "student" && (
                       <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                         {currentUser.remainingRides} rides left
@@ -166,8 +216,12 @@ const Header = () => {
                     </Link>
                   )}
                   <button
-                    onClick={logout}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logout();
+                    }}
                     className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-gray-50 rounded-lg"
+                    type="button"
                   >
                     <LogOut size={16} />
                     Logout
@@ -179,6 +233,7 @@ const Header = () => {
                 <Link
                   to="/login"
                   className="block px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg font-medium text-center transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   Sign In
                 </Link>

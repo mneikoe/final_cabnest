@@ -1,8 +1,28 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
-import { UserPlus, ArrowRight, CheckCircle } from "lucide-react";
+import GoogleLoginButton from "../GoogleLoginButton";
+import { UserPlus, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const passwordRequirements = [
+  { label: "At least 8 characters", regex: /^.{8,}$/, key: "length" },
+  { label: "At least one uppercase letter", regex: /[A-Z]/, key: "uppercase" },
+  { label: "At least one lowercase letter", regex: /[a-z]/, key: "lowercase" },
+  { label: "At least one digit", regex: /\d/, key: "digit" },
+  {
+    label: "At least one special character",
+    regex: /[!@#$%^&*(),.?":{}|<>]/,
+    key: "special",
+  },
+];
+
+const validatePassword = (pwd) => {
+  return passwordRequirements
+    .filter((req) => !req.regex.test(pwd))
+    .map((req) => req.label);
+};
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -14,19 +34,54 @@ const Register = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pwdErrors, setPwdErrors] = useState([]);
 
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
+  const locations = [
+    "RamaMandi/Dakoha",
+    "DeepNagar/Phagwara(all locations)",
+    "LawGate/HardasPur/Maheru/Chaheru/AGI",
+  ];
+
+  const staggerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1 },
+    }),
+  };
+
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    if (e.target.name === "password") {
+      setPwdErrors(validatePassword(e.target.value));
+    }
+    if (e.target.name === "confirmPassword") {
+      // Optionally clear error on typing confirm password
+      if (error === "Passwords do not match") setError("");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    // Validate password requirements
+    const unmet = validatePassword(formData.password);
+    setPwdErrors(unmet);
+
+    if (unmet.length > 0) {
+      setError("Password does not meet all security requirements.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      return setError("Passwords do not match");
+      setError("Passwords do not match");
+      return;
     }
 
     setLoading(true);
@@ -46,28 +101,13 @@ const Register = () => {
     }
   };
 
-  const locations = [
-    "RamaMandi/Dakoha",
-    "DeepNagar/Phagwara(all locations)",
-    "LawGate/HardasPur/Maheru/Chaheru/AGI",
-  ];
-
-  const staggerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.1 },
-    }),
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 px-4 py-8">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
-        className="bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-2xl w-full  max-w-md p-8 border border-white/10"
+        className="bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md p-8 border border-white/10"
       >
         <div className="text-center mb-8">
           <motion.div
@@ -83,6 +123,9 @@ const Register = () => {
           <p className="text-gray-400 mt-2">
             Start your premium commute experience
           </p>
+          <div className="w-full mt-4 max-w-md">
+            <GoogleLoginButton className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-600 bg-[#302447] px-4 py-3 text-white transition-colors hover:bg-[#3d2c5a]" />
+          </div>
         </div>
 
         <AnimatePresence>
@@ -112,6 +155,7 @@ const Register = () => {
         </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name */}
           <motion.div
             variants={staggerVariants}
             initial="hidden"
@@ -138,6 +182,7 @@ const Register = () => {
             </div>
           </motion.div>
 
+          {/* Email */}
           <motion.div
             variants={staggerVariants}
             initial="hidden"
@@ -163,11 +208,13 @@ const Register = () => {
               </label>
             </div>
           </motion.div>
+
+          {/* Phone */}
           <motion.div
             variants={staggerVariants}
             initial="hidden"
             animate="visible"
-            custom={1}
+            custom={2}
           >
             <div className="relative">
               <input
@@ -189,11 +236,12 @@ const Register = () => {
             </div>
           </motion.div>
 
+          {/* Location */}
           <motion.div
             variants={staggerVariants}
             initial="hidden"
             animate="visible"
-            custom={2}
+            custom={3}
           >
             <div className="relative">
               <select
@@ -231,11 +279,12 @@ const Register = () => {
             </div>
           </motion.div>
 
+          {/* Password */}
           <motion.div
             variants={staggerVariants}
             initial="hidden"
             animate="visible"
-            custom={3}
+            custom={4}
           >
             <div className="relative">
               <input
@@ -255,14 +304,35 @@ const Register = () => {
               >
                 Password
               </label>
+              {/* Password Requirements */}
+              <ul className="mt-3 space-y-1 text-xs text-left text-gray-400">
+                {passwordRequirements.map((req) => (
+                  <li
+                    key={req.key}
+                    className={
+                      formData.password && !req.regex.test(formData.password)
+                        ? "text-red-400"
+                        : "text-green-400"
+                    }
+                  >
+                    <span className="mr-1">
+                      {formData.password && req.regex.test(formData.password)
+                        ? "✔️"
+                        : "✖️"}
+                    </span>
+                    {req.label}
+                  </li>
+                ))}
+              </ul>
             </div>
           </motion.div>
 
+          {/* Confirm Password */}
           <motion.div
             variants={staggerVariants}
             initial="hidden"
             animate="visible"
-            custom={4}
+            custom={5}
           >
             <div className="relative">
               <input
@@ -284,11 +354,12 @@ const Register = () => {
             </div>
           </motion.div>
 
+          {/* Submit Button */}
           <motion.div
             variants={staggerVariants}
             initial="hidden"
             animate="visible"
-            custom={5}
+            custom={6}
           >
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -329,8 +400,6 @@ const Register = () => {
             Login here
           </Link>
         </motion.div>
-
-        {/* Decorative Elements */}
       </motion.div>
     </div>
   );

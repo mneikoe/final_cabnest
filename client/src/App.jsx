@@ -2,14 +2,18 @@ import React, { useContext, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./contexts/AuthContext";
 
-// Components
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
+import VerifyEmail from "./components/auth/VerifyEmail";
+import EmailNotVerified from "./components/auth/EmailNotVerified";
+
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Layout from "./components/layout/Layout";
 import CabNestLanding from "./components/LandingPage";
-import BookRide from "./components/student/BookRIde";
+import BookRide from "./components/student/BookRide";
 import MyBookings from "./components/student/MyBookings";
 
 import Dashboard from "./components/admin/Dashboard";
@@ -17,8 +21,9 @@ import SlotManagement from "./components/admin/SlotManagement";
 import StudentManagement from "./components/admin/StudentManagement";
 import TermsConditions from "./components/TermsConditions";
 import PlansAdmin from "./components/admin/PlansAdmin";
-
 import Plans from "./components/student/Plans";
+
+// Gated Route for dashboards (requires user, role, and verified email)
 const PrivateRoute = ({ element, requiredRole }) => {
   const { currentUser, loading } = useContext(AuthContext);
 
@@ -34,6 +39,9 @@ const PrivateRoute = ({ element, requiredRole }) => {
     return <Navigate to="/login" />;
   }
 
+  // 👇 Block user if email is NOT verified
+  // (But allow actual /verify-email/:token and unprotected pages)
+
   if (requiredRole && currentUser.role !== requiredRole) {
     return <Navigate to="/" />;
   }
@@ -44,6 +52,7 @@ const PrivateRoute = ({ element, requiredRole }) => {
 function App() {
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
+
   useEffect(() => {
     const hash = location.hash;
     if (hash) {
@@ -64,6 +73,14 @@ function App() {
           <Route path="/terms-and-conditions" element={<TermsConditions />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          {/* Forgot and Reset Password, Verify Email */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/verify-email-notice" element={<EmailNotVerified />} />
+
+          {/* Student-only Dashboard */}
           <Route
             path="/student/dashboard"
             element={
@@ -77,10 +94,11 @@ function App() {
                     )}
                   </Layout>
                 }
+                requiredRole="student"
               />
             }
           />
-          {/* Student-specific route */}
+
           <Route
             path="/my-bookings"
             element={
@@ -93,13 +111,14 @@ function App() {
                 requiredRole="student"
               />
             }
-          />{" "}
+          />
           <Route
             path="/student/plans"
             element={
               <PrivateRoute element={<Plans />} requiredRole="student" />
             }
           />
+
           {/* Admin-only routes */}
           <Route
             path="/admin/dashboard"

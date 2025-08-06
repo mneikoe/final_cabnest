@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 export const AuthContext = createContext();
@@ -6,108 +6,120 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  // On app load, try to fetch user profile if token available
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      fetchUserProfile(token);
+      axios
+        .get(`${import.meta.env.VITE_BASE_URL}/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setCurrentUser(res.data))
+        .catch(() => {
+          localStorage.removeItem("token");
+          setCurrentUser(null);
+        })
+        .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
   }, []);
 
-  const fetchUserProfile = async (token) => {
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/auth/profile`,
-        config
-      );
-      setCurrentUser(response.data);
-      setLoading(false);
-    } catch (error) {
-      localStorage.removeItem("token");
-      setError("Session expired. Please login again.");
-      setLoading(false);
-    }
-  };
-
+  // Login function
   const login = async (email, password) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/login`,
+        { email, password }
+      );
+      localStorage.setItem("token", data.token);
+
+      // Fetch fresh profile after login
+      const profileRes = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/profile`,
         {
-          email,
-          password,
+          headers: { Authorization: `Bearer ${data.token}` },
         }
       );
 
-      localStorage.setItem("token", response.data.token);
-      setCurrentUser(response.data);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data?.message || "Login failed";
+      setCurrentUser(profileRes.data);
+      return profileRes.data;
+    } catch (err) {
+      throw err.response?.data?.message || "Login failed";
     }
   };
 
-  const register = async (userData) => {
+  // Google login function
+  const googleLogin = async (tokenId) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/auth/register`,
-        userData
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/google-login`,
+        { tokenId }
+      );
+      localStorage.setItem("token", data.token);
+
+      // Fetch fresh profile
+      const profileRes = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/profile`,
+        {
+          headers: { Authorization: `Bearer ${data.token}` },
+        }
       );
 
-      localStorage.setItem("token", response.data.token);
-      setCurrentUser(response.data);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data?.message || "Registration failed";
+      setCurrentUser(profileRes.data);
+
+      return profileRes.data;
+    } catch (err) {
+      throw err.response?.data?.message || "Google login failed";
     }
   };
 
+  // Register function
+  const register = async (userData) => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/register`,
+        userData
+      );
+      localStorage.setItem("token", data.token);
+
+      // Fetch fresh profile after register
+      const profileRes = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/profile`,
+        {
+          headers: { Authorization: `Bearer ${data.token}` },
+        }
+      );
+
+      setCurrentUser(profileRes.data);
+      return profileRes.data;
+    } catch (err) {
+      throw err.response?.data?.message || "Registration failed";
+    }
+  };
+
+  // Logout function
   const logout = () => {
     localStorage.removeItem("token");
     setCurrentUser(null);
   };
-  const updateUserData = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return false;
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/students/me`,
-        config
-      );
-
-      setCurrentUser(data);
-      return true;
-    } catch (error) {
-      console.error("Error updating user data:", error);
-      return false;
-    }
-  };
-  const value = {
-    currentUser,
-    login,
-    register,
-    logout,
-    loading,
-    error,
-    updateUserData,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        login,
+        googleLogin,
+        register,
+        logout,
+        loading,
+        setCurrentUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
+
 export const useAuth = () => useContext(AuthContext);
